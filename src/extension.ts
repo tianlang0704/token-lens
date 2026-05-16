@@ -34,6 +34,7 @@ type QuotaFetchResult =
 
 const QUOTA_SNAPSHOT_STORAGE_KEY = "token-lens.quotaSnapshot";
 const REFRESH_INTERVAL_STORAGE_KEY = "token-lens.refreshIntervalMinutes";
+const SAVED_MODELS_STORAGE_KEY = "token-lens.savedModels";
 const DEFAULT_REFRESH_INTERVAL_MINUTES = 5;
 const NORMAL_REFRESH_DELAY_MS = DEFAULT_REFRESH_INTERVAL_MINUTES * 60 * 1000;
 const TRANSIENT_RETRY_DELAYS_MS = [10000, 30000, 60000, 120000, 300000] as const;
@@ -251,6 +252,14 @@ function getRefreshIntervalMinutes(): number {
 
 async function saveRefreshIntervalMinutes(minutes: number): Promise<void> {
   await extensionContext.globalState.update(REFRESH_INTERVAL_STORAGE_KEY, minutes);
+}
+
+function getSavedModels(): string[] {
+  return extensionContext.globalState.get<string[]>(SAVED_MODELS_STORAGE_KEY) ?? [];
+}
+
+async function saveSavedModels(savedModels: string[]): Promise<void> {
+  await extensionContext.globalState.update(SAVED_MODELS_STORAGE_KEY, savedModels);
 }
 
 function getRefreshDelayMs(): number {
@@ -496,6 +505,8 @@ export function activate(context: vscode.ExtensionContext): void {
       await saveRefreshIntervalMinutes(minutes);
       scheduleRefresh(getRefreshDelayMs());
     },
+    getSavedModels,
+    saveSavedModels,
   });
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(TokenSidebarProvider.viewType, tokenSidebar),

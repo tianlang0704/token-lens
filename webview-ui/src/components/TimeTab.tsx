@@ -180,7 +180,7 @@ type TimeTabProps = {
 
 function TimeTab({ dayData, chartData, charts, modelPricing, pricingState, getSavedModels }: TimeTabProps) {
   const [period, setPeriod] = useState<Period>("daily");
-  const [activeView, setActiveView] = useState<"cards" | "graph">("cards");
+  const [activeView, setActiveView] = useState<"cards" | "graph">("graph");
 
   const aggregatedDayData = useMemo(() => aggregateDayData(dayData, period), [dayData, period]);
   const aggregatedChartData = useMemo(() => aggregateChartData(chartData, period), [chartData, period]);

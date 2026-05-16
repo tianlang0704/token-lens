@@ -22,8 +22,9 @@ async function getHtml(
   projectDays: ProjectDayTokens[],
   modelCosts: ModelCost[],
   quotaState: QuotaState,
+  savedModels: string[] = [],
 ): Promise<string> {
-  const webviewData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState);
+  const webviewData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState, undefined, undefined, savedModels);
   return getHtmlFromData({ extensionUri, webview, webviewData });
 }
 

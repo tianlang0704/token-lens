@@ -22,17 +22,12 @@ function normalizeCostFilterState(costFilterState: Partial<CostFilterState> | un
   };
 }
 
-function normalizePersistedState(state: Partial<WebviewPersistedState> | undefined): WebviewPersistedState {
-  return {
-    costFilters: normalizeCostFilterState(state?.costFilters),
-    savedModels: Array.isArray(state?.savedModels) ? [...state.savedModels] : [],
-  };
-}
-
-let persistedState = normalizePersistedState(vscodeApi?.getState());
+let persistedState = {
+  costFilters: normalizeCostFilterState(vscodeApi?.getState()?.costFilters),
+};
 
 function savePersistedState(nextState: WebviewPersistedState): void {
-  persistedState = normalizePersistedState(nextState);
+  persistedState = { costFilters: normalizeCostFilterState(nextState.costFilters) };
   vscodeApi?.setState(persistedState);
 }
 
@@ -55,20 +50,26 @@ function getCostFilterState(): CostFilterState {
 
 function setCostFilterState(costFilters: CostFilterState): void {
   savePersistedState({
-    ...persistedState,
     costFilters: normalizeCostFilterState(costFilters),
   });
 }
 
+let savedModelsState: string[] = (() => {
+  try {
+    const data = readWebviewData();
+    return Array.isArray(data.savedModels) ? [...data.savedModels] : [];
+  } catch {
+    return [];
+  }
+})();
+
 function getSavedModels(): string[] {
-  return [...persistedState.savedModels];
+  return [...savedModelsState];
 }
 
 function setSavedModels(savedModels: string[]): void {
-  savePersistedState({
-    ...persistedState,
-    savedModels: [...savedModels],
-  });
+  savedModelsState = [...savedModels];
+  postWebviewMessage({ type: "saveSavedModels", savedModels: [...savedModels] });
 }
 
 export {

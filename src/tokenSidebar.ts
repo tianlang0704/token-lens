@@ -36,6 +36,7 @@ const LOADING_WEBVIEW_DATA: WebviewData = {
   hasData: false,
   hasDays: false,
   hasProjects: false,
+  savedModels: [],
 };
 
 type SettingsCallbacks = {
@@ -43,6 +44,8 @@ type SettingsCallbacks = {
   saveApiKey: (apiKey: string) => Promise<void>;
   getRefreshIntervalMinutes: () => number;
   saveRefreshIntervalMinutes: (minutes: number) => Promise<void>;
+  getSavedModels: () => string[];
+  saveSavedModels: (savedModels: string[]) => Promise<void>;
 };
 
 export class TokenSidebarProvider implements vscode.WebviewViewProvider {
@@ -102,6 +105,11 @@ export class TokenSidebarProvider implements vscode.WebviewViewProvider {
       if (message.type === "saveRefreshInterval") {
         void this.settingsCallbacks?.saveRefreshIntervalMinutes(message.minutes);
         void this.handleRequestSettings();
+        return;
+      }
+
+      if (message.type === "saveSavedModels") {
+        void this.settingsCallbacks?.saveSavedModels(message.savedModels);
         return;
       }
     });
@@ -222,7 +230,7 @@ export class TokenSidebarProvider implements vscode.WebviewViewProvider {
         return;
       }
 
-      const partialData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState, EMPTY_MODEL_DATA, "loading");
+      const partialData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState, EMPTY_MODEL_DATA, "loading", this.settingsCallbacks?.getSavedModels() ?? []);
 
       if (refreshGeneration !== this.refreshGeneration || currentView !== this.view) {
         return;
@@ -237,7 +245,7 @@ export class TokenSidebarProvider implements vscode.WebviewViewProvider {
         return;
       }
 
-      const fullData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState, modelData.data, modelData.status);
+      const fullData = await buildWebviewData(projects, days, projectDays, modelCosts, quotaState, modelData.data, modelData.status, this.settingsCallbacks?.getSavedModels() ?? []);
 
       if (refreshGeneration !== this.refreshGeneration || currentView !== this.view) {
         return;
@@ -251,7 +259,7 @@ export class TokenSidebarProvider implements vscode.WebviewViewProvider {
       }
 
       if (!this.initialized) {
-        const fallbackHtml = await getHtml(currentView.webview, this.extensionUri, [], [], [], [], quotaState);
+        const fallbackHtml = await getHtml(currentView.webview, this.extensionUri, [], [], [], [], quotaState, this.settingsCallbacks?.getSavedModels() ?? []);
 
         if (refreshGeneration !== this.refreshGeneration || currentView !== this.view) {
           return;

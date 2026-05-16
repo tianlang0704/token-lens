@@ -117,6 +117,7 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
+    "@lobehub/icons-static-svg": "^1.90.0",
     "dayjs": "^1.11.20",
     "drizzle-orm": "^0.45.2",
     "preact": "^10.29.1",

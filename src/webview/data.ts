@@ -179,6 +179,7 @@ async function buildWebviewData(
   quotaState: QuotaState,
   modelDataOverride?: ModelData,
   pricingStatusOverride?: PricingStatus,
+  savedModels: string[] = [],
 ): Promise<WebviewData> {
   const grandTotal = projects.reduce((sum, row) => sum + row.totalTokens, 0);
   const grandCost = projects.reduce((sum, row) => sum + row.totalCost, 0);
@@ -241,7 +242,7 @@ async function buildWebviewData(
       projectChartConfigs[index].id,
       (projectDaysByProject.get(project.project) ?? []).map((day) => mapChartDayData(day)),
     ])),
-    defaultTab: projects.length > 0 ? "projects" : "daily",
+    defaultTab: "daily",
     modelPricing: modelData.pricing,
     projectTokenBreakdowns: Object.fromEntries(projects.map((project) => [
       project.project,
@@ -269,6 +270,7 @@ async function buildWebviewData(
     hasData: projects.length > 0 || days.length > 0,
     hasDays: days.length > 0,
     hasProjects: projects.length > 0,
+    savedModels,
   };
 }
 

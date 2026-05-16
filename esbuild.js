@@ -53,6 +53,7 @@ async function main() {
 		jsx: 'automatic',
 		jsxImportSource: 'preact',
 		alias: { '@': './webview-ui/src', '@shared': './src' },
+		loader: { '.svg': 'text' },
 		plugins: [tailwindPlugin(), esbuildProblemMatcherPlugin],
 	});
 

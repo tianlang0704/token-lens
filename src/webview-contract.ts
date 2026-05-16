@@ -159,6 +159,7 @@ type WebviewData = {
   hasData: boolean;
   hasDays: boolean;
   hasProjects: boolean;
+  savedModels: string[];
 };
 
 type CostFilterState = {
@@ -170,7 +171,6 @@ type CostFilterState = {
 
 type WebviewPersistedState = {
   costFilters: CostFilterState;
-  savedModels: string[];
 };
 
 type SettingsData = {
@@ -199,6 +199,9 @@ type WebviewOutboundMessage = {
 } | {
   type: "saveRefreshInterval";
   minutes: number;
+} | {
+  type: "saveSavedModels";
+  savedModels: string[];
 };
 
 const DEFAULT_COST_FILTER_STATE: CostFilterState = {
