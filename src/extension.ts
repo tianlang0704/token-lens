@@ -65,11 +65,17 @@ function formatDuration(timestamp: number): string {
 
 function formatDurationCompact(timestamp: number): string {
   const diff = timestamp - Date.now();
-  if (diff <= 0) return "now";
+  if (diff <= 0) {
+    return "now";
+  }
   const hours = Math.floor(diff / 3600000);
-  if (hours > 0) return `${hours}h`;
+  if (hours > 0) {
+    return `${hours}h`;
+  }
   const minutes = Math.floor((diff % 3600000) / 60000);
-  if (minutes > 0) return `${minutes}m`;
+  if (minutes > 0) {
+    return `${minutes}m`;
+  }
   return "1m";
 }
 

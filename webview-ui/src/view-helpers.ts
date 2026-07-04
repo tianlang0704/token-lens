@@ -13,7 +13,9 @@ function normalizeModelNameForMatch(modelId: string): string {
 }
 
 function formatDurationMs(ms: number): string {
-  if (ms <= 0) return "0m";
+  if (ms <= 0) {
+    return "0m";
+  }
   const totalMinutes = Math.floor(ms / 60000);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
