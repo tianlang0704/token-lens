@@ -4,7 +4,19 @@ All notable changes to the "Token Lens" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [1.7.0]
+
+- Added a daily usage heatmap to the time graph view.
+- Refactored database handling and preload the SQL module on activation for faster sidebar loads.
+- Copy the `sql-wasm` asset during the build.
+- Keep saved-models state in sync when receiving a full webview update.
+
+## [1.6.5]
+
+- Persist pinned models globally across workspaces.
+- Default the time view to the graph layout.
+- Switch icon rendering to the static Zai SVG asset.
+- Republish patch builds with internal tooling and dependency updates.
 
 ## [1.6.0]
 
