@@ -1,13 +1,16 @@
 # Change Log
 
-All notable changes to the "Token Lens" extension will be documented in this file.
+All notable changes to the "Token Lens" extension will be documented in this
+file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how
+to structure this file.
 
-## [1.7.0]
+## [1.8.0]
 
 - Added a daily usage heatmap to the time graph view.
-- Refactored database handling and preload the SQL module on activation for faster sidebar loads.
+- Refactored database handling and preload the SQL module on activation for
+  faster sidebar loads.
 - Copy the `sql-wasm` asset during the build.
 - Keep saved-models state in sync when receiving a full webview update.
 
@@ -43,7 +46,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.5.0]
 
 - Rewrote the webview UI using Preact for a lighter runtime.
-- Added a handshake protocol and race condition protection for webview messaging.
+- Added a handshake protocol and race condition protection for webview
+  messaging.
 - Implemented incremental data updates and cost tooltips in the analytics view.
 - Added model usage highlighting in cost comparison lists.
 - Modularized webview components and enhanced time/cost views.
@@ -58,7 +62,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.3.0]
 
-- Refactored the webview into a more modular, contract-based client architecture.
+- Refactored the webview into a more modular, contract-based client
+  architecture.
 
 ## [1.2.0]
 
@@ -91,5 +96,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.1.1]
 
 - Initial public release of Token Lens for visualizing LLM token usage.
-- Added quota summaries, daily project usage queries, and SQL.js-backed local storage.
-- Improved the sidebar and status bar UI, and finalized the project rename and package metadata updates.
+- Added quota summaries, daily project usage queries, and SQL.js-backed local
+  storage.
+- Improved the sidebar and status bar UI, and finalized the project rename and
+  package metadata updates.
