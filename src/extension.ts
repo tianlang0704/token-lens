@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { closeDatabase, preloadSqlModule } from "@/db";
 import { TokenSidebarProvider } from "@/tokenSidebar";
 import type { QuotaState, QuotaSummary } from "@/types";
 
@@ -116,18 +117,30 @@ function getStatusBackgroundColor(usedPct: number): vscode.ThemeColor | undefine
   return undefined;
 }
 
+function finiteNumber(value: number | undefined, fallback: number): number {
+  if (value === undefined || !Number.isFinite(value)) {
+    return fallback;
+  }
+  return value;
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
 function buildQuotaSummary(data: QuotaResponse["data"]): QuotaSummary | undefined {
   const tokenLimit = data.limits.find((limit) => limit.type === "TOKENS_LIMIT");
   if (!tokenLimit) {
     return undefined;
   }
 
-  const usedPercentage = tokenLimit.percentage ?? 0;
-  const limitTokens = tokenLimit.number ?? 0;
-  const usedTokens = tokenLimit.usage
-    ?? tokenLimit.currentValue
-    ?? (limitTokens > 0 ? Math.round((limitTokens * usedPercentage) / 100) : 0);
-  const remainingTokens = tokenLimit.remaining ?? Math.max(limitTokens - usedTokens, 0);
+  const usedPercentage = finiteNumber(tokenLimit.percentage, 0);
+  const limitTokens = finiteNumber(tokenLimit.number, 0);
+  const usedTokens = finiteNumber(
+    tokenLimit.usage,
+    finiteNumber(tokenLimit.currentValue, limitTokens > 0 ? Math.round((limitTokens * usedPercentage) / 100) : 0),
+  );
+  const remainingTokens = finiteNumber(tokenLimit.remaining, Math.max(limitTokens - usedTokens, 0));
   const remainingPercentage = Math.max(0, Math.min(100, 100 - usedPercentage));
 
   return {
@@ -191,13 +204,13 @@ function isQuotaSummary(value: unknown): value is QuotaSummary {
   }
 
   const maybeSummary = value as Record<string, unknown>;
-  return typeof maybeSummary.usedTokens === "number"
-    && typeof maybeSummary.limitTokens === "number"
-    && typeof maybeSummary.remainingTokens === "number"
-    && typeof maybeSummary.usedPercentage === "number"
-    && typeof maybeSummary.remainingPercentage === "number"
-    && typeof maybeSummary.nextResetTime === "number"
-    && typeof maybeSummary.fetchedAt === "number";
+  return isFiniteNumber(maybeSummary.usedTokens)
+    && isFiniteNumber(maybeSummary.limitTokens)
+    && isFiniteNumber(maybeSummary.remainingTokens)
+    && isFiniteNumber(maybeSummary.usedPercentage)
+    && isFiniteNumber(maybeSummary.remainingPercentage)
+    && isFiniteNumber(maybeSummary.nextResetTime)
+    && isFiniteNumber(maybeSummary.fetchedAt);
 }
 
 function parseRetryAfterMs(retryAfterHeader: string | undefined): number | undefined {
@@ -486,6 +499,7 @@ async function refreshQuota(showLoadingState: boolean): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
+  void preloadSqlModule().catch(() => {});
   extensionContext = context;
   secrets = context.secrets;
 
@@ -560,4 +574,6 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 }
 
-export function deactivate(): void { }
+export function deactivate(): void {
+  closeDatabase();
+}

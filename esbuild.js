@@ -1,4 +1,5 @@
 const esbuild = require("esbuild");
+const fs = require("fs");
 const { tailwindPlugin } = require("esbuild-plugin-tailwindcss");
 
 const production = process.argv.includes('--production');
@@ -24,6 +25,17 @@ const esbuildProblemMatcherPlugin = {
 	},
 };
 
+const copySqlWasmPlugin = {
+	name: 'copy-sql-wasm',
+
+	setup(build) {
+		build.onEnd(() => {
+			fs.copyFileSync('node_modules/sql.js/dist/sql-wasm.wasm', 'dist/sql-wasm.wasm');
+			console.log('[build] copied sql-wasm.wasm');
+		});
+	},
+};
+
 async function main() {
 	const extensionCtx = await esbuild.context({
 		entryPoints: ['src/extension.ts'],
@@ -37,7 +49,7 @@ async function main() {
 		external: ['vscode'],
 		logLevel: 'silent',
 		alias: { '@': './src', '@shared': './src' },
-		plugins: [esbuildProblemMatcherPlugin],
+		plugins: [esbuildProblemMatcherPlugin, copySqlWasmPlugin],
 	});
 
 	const webviewCtx = await esbuild.context({

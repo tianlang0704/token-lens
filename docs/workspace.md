@@ -46,8 +46,9 @@ webview-ui/
     │   ├── DailyToolbar.tsx      # Time-tab period and cards/graph view toggles
     │   ├── DailyCardsView.tsx    # Intersection-observer lazy-loaded day list renderer for the Time tab cards view
     │   ├── DayCard.tsx           # Expandable per-day card with token bars, model usage, and model-cost comparison
-    │   ├── DailyGraphView.tsx    # Time-tab graph panel with summary stats, line charts, and model pie chart
+    │   ├── DailyGraphView.tsx    # Time-tab graph panel with summary stats, usage heatmap, line charts, and model pie chart
     │   ├── Chart.tsx             # Shared line and pie chart rendering for project and daily analytics
+    │   ├── Heatmap.tsx           # Time-tab usage heatmap: daily calendar grid or weekly/monthly period-bucket row
     │   ├── CostTab.tsx           # Cost-tab container that manages provider, sort, and age filter state
     │   ├── CostFiltersPanel.tsx  # Cost-tab filter controls and collapse state UI
     │   ├── CostTokenSummary.tsx  # Cost-tab token summary strip
@@ -84,7 +85,7 @@ webview-ui/
       - **Projects tab:** Expandable cards showing the project name with a total-token badge, per-project token breakdown (input, output, reasoning, cache read/write), cost, step count, session count, and duration. Includes stacked color bar visualization. Expanded view includes per-project SVG line chart, LLM usage breakdown, and model cost estimates from OpenRouter pricing data with inline loading/unavailable states while pricing refreshes.
       - **Time tab:** Includes a Daily/Weekly/Monthly period switcher and two sub-views toggled via a Cards/Graph pill switcher:
         - **Cards view:** Intersection-observer-based lazy-loaded list of day-by-day usage with horizontal bar charts. Each day's bars are scaled relative to that day's highest token type value (not across all days), so the dominant token type always fills 100%. Rows support expand/collapse.
-        - **Graph view:** SVG line charts for Total Tokens (area fill), Token Breakdown (multi-series), Sessions And Steps, and LLM Usage (pie chart). Summary stat labels and chart data update with the active daily/weekly/monthly aggregation, and series can be toggled via legend buttons.
+        - **Graph view:** SVG line charts for Total Tokens (area fill), Token Breakdown (multi-series), Sessions And Steps, and LLM Usage (pie chart). A usage heatmap renders below the pie chart and is independent of the Daily/Weekly/Monthly period toggle: it always shows a GitHub-style weekday × week calendar grid of total tokens covering the last 6 months (26 weeks ending at the current week), fed from raw per-day data. The grid is laid out as flex week-columns that fill the card width (no horizontal scrolling), with color intensity per day relative to the peak day in the visible window (no axis labels). Summary stat labels and chart data update with the active daily/weekly/monthly aggregation, and series can be toggled via legend buttons.
       - **Cost tab:** Estimated per-model cost list with provider/sort/age filters. The tab displays the current OpenRouter pricing status, disables filters while pricing is unavailable or still loading, and shows skeleton rows instead of silently hiding pricing results during refresh. Clicking a model in this list saves it to VS Code `globalState` so the pinned models persist across workspaces and are included alongside project/period-specific models in cost comparisons across the Projects and Time tabs.
      - **Data injection:** On first load, `src/webview/document.ts` serializes the payload into a `<script type="application/json">` tag and `webview-ui/src/bootstrap.ts` parses it. After the Preact root attaches its message listener, it sends a `{ type: "ready" }` handshake so the extension can safely replay the latest payload. The sidebar provider only applies the latest completed refresh, so slower stale refreshes cannot overwrite a newer quota snapshot. Subsequent updates are sent via `postMessage` with a `{ type: "fullUpdate", data: WebviewData }` message, received by the `Root` wrapper in `webview-ui/src/main.tsx` which updates Preact state incrementally — preserving scroll position, active tab, expanded cards, and filter state.
       - **Webview persistence:** cost filters are stored with VS Code webview state (`acquireVsCodeApi().getState()/setState()`). Saved models are persisted globally via VS Code `globalState` so they are shared across all workspaces.
@@ -209,8 +210,9 @@ webview-ui/
 | `webview-ui/src/components/DailyToolbar.tsx` | Time-tab period and cards/graph view toggles |
 | `webview-ui/src/components/DailyCardsView.tsx` | Intersection-observer lazy-loaded day list renderer for the Time tab cards view |
 | `webview-ui/src/components/DayCard.tsx` | Expandable per-day card with token bars, model usage, and model-cost comparison |
-| `webview-ui/src/components/DailyGraphView.tsx` | Time-tab graph panel with summary stats, line charts, and model pie chart |
+| `webview-ui/src/components/DailyGraphView.tsx` | Time-tab graph panel with summary stats, usage heatmap, line charts, and model pie chart |
 | `webview-ui/src/components/Chart.tsx` | Shared line and pie chart rendering for project and daily analytics |
+| `webview-ui/src/components/Heatmap.tsx` | Time-tab usage heatmap: daily calendar grid or weekly/monthly period-bucket row |
 | `webview-ui/src/components/CostTab.tsx` | Cost-tab container that manages provider, sort, and age filter state |
 | `webview-ui/src/components/CostFiltersPanel.tsx` | Cost-tab filter controls and collapse state UI |
 | `webview-ui/src/components/CostTokenSummary.tsx` | Cost-tab token summary strip |

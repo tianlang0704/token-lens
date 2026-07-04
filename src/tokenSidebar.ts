@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { DB_PATH, queryProjectTokens, queryDayTokens, queryProjectDayTokens, queryModelCosts, queryProjectModels, queryDayModels } from "@/db";
+import { DB_PATH, querySidebarData } from "@/db";
 import { getHtml, getHtmlFromData } from "@/html";
 import { fetchModelDataWithStatus } from "@/model-data";
 import type { ModelData } from "@/model-data";
@@ -175,14 +175,7 @@ export class TokenSidebarProvider implements vscode.WebviewViewProvider {
     const refreshGeneration = ++this.refreshGeneration;
 
     try {
-      const [projects, days, projectDays, modelCosts, projectModels, dayModels] = await Promise.all([
-        queryProjectTokens(),
-        queryDayTokens(),
-        queryProjectDayTokens(),
-        queryModelCosts(),
-        queryProjectModels(),
-        queryDayModels(),
-      ]);
+      const { projects, days, projectDays, modelCosts, projectModels, dayModels } = await querySidebarData();
 
       const projectModelsMap = new Map<string, typeof projectModels>();
       for (const row of projectModels) {

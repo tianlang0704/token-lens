@@ -1,9 +1,11 @@
 import type { ChartConfig, ChartDayItem } from "@shared/webview-contract";
 import { formatTokensCompact } from "@/view-helpers";
 import { LineChart, PieChart } from "@/components/Chart";
+import { Heatmap } from "@/components/Heatmap";
 
 type DailyGraphViewProps = {
   chartData: ChartDayItem[];
+  heatmapData: ChartDayItem[];
   charts: ChartConfig[];
   periodUnit: string;
 };
@@ -36,7 +38,7 @@ function DailyGraphStats({ chartData, periodUnit }: { chartData: ChartDayItem[];
   );
 }
 
-function DailyGraphView({ chartData, charts, periodUnit }: DailyGraphViewProps) {
+function DailyGraphView({ chartData, heatmapData, charts, periodUnit }: DailyGraphViewProps) {
   return (
     <div class="rounded-md border border-(--border) bg-(--card-bg) p-3">
       <DailyGraphStats chartData={chartData} periodUnit={periodUnit} />
@@ -44,6 +46,7 @@ function DailyGraphView({ chartData, charts, periodUnit }: DailyGraphViewProps) 
         <LineChart key={chart.id} config={chart} days={chartData} separated={index > 0} />
       ))}
       <PieChart days={chartData} periodUnit={periodUnit} separated={charts.length > 0} />
+      <Heatmap chartData={heatmapData} separated />
     </div>
   );
 }

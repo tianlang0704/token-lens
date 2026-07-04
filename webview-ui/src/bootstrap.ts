@@ -72,6 +72,10 @@ function setSavedModels(savedModels: string[]): void {
   postWebviewMessage({ type: "saveSavedModels", savedModels: [...savedModels] });
 }
 
+function syncSavedModels(savedModels: string[]): void {
+  savedModelsState = Array.isArray(savedModels) ? [...savedModels] : [];
+}
+
 export {
   getCostFilterState,
   getSavedModels,
@@ -79,4 +83,5 @@ export {
   readWebviewData,
   setCostFilterState,
   setSavedModels,
+  syncSavedModels,
 };

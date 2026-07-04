@@ -195,7 +195,7 @@ function TimeTab({ dayData, chartData, charts, modelPricing, pricingState, getSa
         </div>
       ) : (
         <div class="min-h-0 flex-1 overflow-y-auto px-2.5 pt-2.5 pb-5" id="daily-view-graph">
-          <DailyGraphView chartData={aggregatedChartData} charts={charts} periodUnit={periodUnit} />
+          <DailyGraphView chartData={aggregatedChartData} heatmapData={chartData} charts={charts} periodUnit={periodUnit} />
         </div>
       )}
     </div>

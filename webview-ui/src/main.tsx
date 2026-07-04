@@ -1,7 +1,7 @@
 import { render, type ComponentChildren } from "preact";
 import { useState, useEffect, useCallback } from "preact/hooks";
 import { App } from "@/App";
-import { postWebviewMessage, readWebviewData } from "@/bootstrap";
+import { postWebviewMessage, readWebviewData, syncSavedModels } from "@/bootstrap";
 import "@/tailwind.css";
 import type { WebviewData, WebviewInboundMessage, SettingsData } from "@shared/webview-contract";
 
@@ -32,6 +32,7 @@ function Root() {
       if (!message) return;
       if (message.type === "fullUpdate" && message.data) {
         setData(message.data);
+        syncSavedModels(message.data.savedModels);
       } else if (message.type === "showSettings") {
         setShowSettings(true);
         postWebviewMessage({ type: "requestSettings" });
